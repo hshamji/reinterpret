@@ -1,5 +1,6 @@
 use std::{alloc, ptr};
 use std::alloc::{alloc, Layout};
+use std::ptr::NonNull;
 use crate::lib::{initChunk, swapChunk};
 
 mod lib;
@@ -26,9 +27,29 @@ fn main() {
     let sentence = String::from("This is a long sentence");
     println!("First word of {} is {}", sentence, first_world(&sentence));
 
-    let new_layout = Layout::array::<u8>(1).unwrap();
-    let new_ptr = unsafe { alloc::alloc(new_layout) } ;
-    unsafe { ptr::write()}
+    let new_layout = Layout::array::<u8>(4).unwrap();
+    let ptr = unsafe { alloc::alloc(new_layout) } ;
+    // let ptr = NonNull::new(new_ptr as *mut u8).unwrap();
+
+    unsafe {
+        // ptr::write(ptr.as_ptr().add(0), 10u8);
+        // ptr::write(ptr.as_ptr().add(1), 21u8);
+        // ptr::write(ptr.as_ptr().add(2), 32u8);
+        // ptr::write(ptr.as_ptr().add(3), 43u8);
+
+        ptr::write(ptr.add(0), 10u8);
+        ptr::write(ptr.add(1), 21u8);
+        ptr::write(ptr.add(2), 32u8);
+        ptr::write(ptr.add(3), 43u8);
+
+        println!("Pointer to mem is {:?}", ptr::read(ptr.add(1)));
+        let a = std::slice::from_raw_parts(ptr.add(1), 3);
+
+        for i in a {
+            println!("An elem is {:?}", i);
+        }
+    }
+
 
 }
 

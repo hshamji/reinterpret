@@ -14,7 +14,7 @@ pub struct Chunk {
 }
 
 pub fn initChunk() -> Chunk {
-    Chunk{
+    Chunk {
         code: Box::new([]),
         count: 0,
         capacity: 0,
@@ -34,10 +34,9 @@ pub fn swapChunk(mut a: Box<[u8]>, c: &mut Chunk) {
 // }
 
 fn GROW_CAPACITY(a: u32) -> u32 {
-    max(a * 2, 8 )
+    max(a * 2, 8)
 }
 
 fn main() {
     let a = Layout::array::<u8>(5).unwrap();
-
 }
