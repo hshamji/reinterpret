@@ -27,8 +27,8 @@ fn main() {
     let sentence = String::from("This is a long sentence");
     println!("First word of {} is {}", sentence, first_world(&sentence));
 
-    let new_layout = Layout::array::<u8>(4).unwrap();
-    let ptr = unsafe { alloc::alloc(new_layout) } ;
+    let layout = Layout::array::<u8>(4).unwrap();
+    let ptr = unsafe { alloc::alloc(layout) } ;
     // let ptr = NonNull::new(new_ptr as *mut u8).unwrap();
 
     unsafe {
@@ -42,22 +42,25 @@ fn main() {
         ptr::write(ptr.add(2), 32u8);
         ptr::write(ptr.add(3), 43u8);
 
-        println!("Pointer to mem is {:?}", ptr::read(ptr.add(1)));
+        println!("Pointer to mem is {:?}", ptr::read(ptr.add(0)));
         let a = std::slice::from_raw_parts(ptr.add(1), 3);
 
         for i in a {
             println!("An elem is {:?}", i);
         }
 
-        let popped1 = ptr::read(ptr.add(3));
-        println!("Popped value :{:?}", popped1);
+        // let popped1 = ptr::read(ptr.add(3));
+        // println!("Popped value :{:?}", popped1);
 
-        let new_layout = Layout::array::<u8>(3).unwrap();
+        // let new_layout = Layout::array::<u8>(1).unwrap();
+        println!("First elem: {:?}, ptr: {:?}", ptr::read(ptr.add(0)), ptr);
+
         unsafe {
-            alloc::dealloc(ptr, new_layout);
+            alloc::dealloc(ptr, layout);
         }
+        println!("Is ptr avail: {:?}", ptr);
 
-        println!("Can you print same val from array: {:?}", ptr::read(ptr.add(3)));
+        println!("Can you print same val from array: {:?}", ptr::read(ptr.add(0)));
 
     }
 

@@ -36,13 +36,24 @@ fn GROW_CAPACITY(a: usize) -> usize {
     max(a * 2, 8)
 }
 
-// fn GROW_ARRAY(c: &mut Chunk, new_capacity: usize) {
-//     if new_capacity == 0 {
-//
-//         unsafe { ptr::read(c.code)} // free code
-//         c.code = NonNull::dangling()
-//     }
-// }
+fn GROW_ARRAY(c: &mut Chunk, new_capacity: usize) {
+    if new_capacity == 0 {
+        if c.count > 0 { // if there had been usage, deallocate, if not, do nothing
+            unsafe {
+                alloc::dealloc(c.code.as_ptr(), Layout::array::<u8>(c.capacity).unwrap());
+            }
+        }
+        if c.count > 0 { // if it had contents, can deallocate, if not, then can't deallocate
+        }
+    } else {
+    //     reallocate to a possibly new mem location
+        unsafe {
+            c.code = NonNull::new(alloc::realloc(c.code.as_ptr(), Layout::array::<u8>(c.capacity).unwrap(), new_capacity)).unwrap();
+        }
+    }
+
+    c.capacity = new_capacity
+}
 
 fn main() {
     let a = Layout::array::<u8>(5).unwrap();
