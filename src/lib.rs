@@ -1,4 +1,5 @@
-use std::alloc::{self, Layout, ptr};
+use std::alloc::{self, Layout};
+use std::ptr;
 use std::cmp::max;
 use std::ptr::NonNull;
 
@@ -23,32 +24,25 @@ pub fn initChunk() -> Chunk {
 
 pub fn writeChunk(c: &mut Chunk, val:u8) {
     if c.capacity < c.count+1 {
-        let old_capacity = c.capacity;
-        c.capacity = GROW_CAPACITY(old_capacity);
-        c.code = GROW_ARRAY(&c);
+        let new_capacity = GROW_CAPACITY(c.capacity);
+        // GROW_ARRAY(c, new_capacity);
     }
 
     unsafe { ptr::write(c.code.as_ptr().add(c.count), val);}
-    c.code[c.count] = byte;
     c.count += 1;
-
 }
-
-// pub fn swapChunk(mut a: Box<[u8]>, c: &mut Chunk) {
-//     c.code = a;
-// }
-
-// pub fn writeChunk(c: &mut Chunk, val: u8) {
-//     if c.capacity < c.count+1 {
-//         let old_capacity = c.capacity;
-//         c.capacity = GROW_CAPACITY(old_capacity);
-//         c.code = GROW_ARRAY(val, &c.code, old_capacity, c.capacity)
-//     }
-// }
 
 fn GROW_CAPACITY(a: usize) -> usize {
     max(a * 2, 8)
 }
+
+// fn GROW_ARRAY(c: &mut Chunk, new_capacity: usize) {
+//     if new_capacity == 0 {
+//
+//         unsafe { ptr::read(c.code)} // free code
+//         c.code = NonNull::dangling()
+//     }
+// }
 
 fn main() {
     let a = Layout::array::<u8>(5).unwrap();

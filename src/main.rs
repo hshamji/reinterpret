@@ -1,7 +1,7 @@
 use std::{alloc, ptr};
 use std::alloc::{alloc, Layout};
 use std::ptr::NonNull;
-use crate::lib::{initChunk, swapChunk};
+use crate::lib::{initChunk };
 
 mod lib;
 
@@ -13,7 +13,7 @@ fn main() {
 
     let mut c = initChunk();
     println!("Initial array is {:?}", c);
-    swapChunk(Box::new([0u8, 1u8, 2u8]), &mut c);
+    // swapChunk(Box::new([0u8, 1u8, 2u8]), &mut c);
 
     println!("Updated chunk : {:?}", c);
 
@@ -48,6 +48,17 @@ fn main() {
         for i in a {
             println!("An elem is {:?}", i);
         }
+
+        let popped1 = ptr::read(ptr.add(3));
+        println!("Popped value :{:?}", popped1);
+
+        let new_layout = Layout::array::<u8>(3).unwrap();
+        unsafe {
+            alloc::dealloc(ptr, new_layout);
+        }
+
+        println!("Can you print same val from array: {:?}", ptr::read(ptr.add(3)));
+
     }
 
 
