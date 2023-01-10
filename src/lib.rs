@@ -1,11 +1,14 @@
+#[macro_use]
+extern crate num_derive;
+extern crate num;
+
+
 use std::alloc::{self, Layout};
 use std::ptr;
 use std::cmp::max;
 use std::ptr::NonNull;
 
-extern crate num;
-#[macro_use]
-extern crate num_derive;
+
 
 // https://enodev.fr/posts/rusticity-convert-an-integer-to-an-enum.html
 // https://stackoverflow.com/questions/41648339/how-to-specify-the-underlying-type-of-an-enum-in-rust
@@ -65,19 +68,19 @@ fn disassemble_instruction(c: &mut Chunk, offset: usize) -> usize {
 
         let op_code = num::FromPrimitive::from_u8(instruction).expect(&format!("Unknown Opcode: {:?}", instruction));
 
-        match op_code {
+        return match op_code {
             OpCode::OpReturn => {
-                return simpleInstruction("OP_RETURN", offset)
+                simple_instruction("OP_RETURN", offset)
             }
             _ => {
                 println!("Unknown opcode: {:?}", instruction);
-                return offset+1
+                offset + 1
             }
         };
     };
 }
 
-fn simpleInstruction(name: &str, offset:usize) -> usize {
+fn simple_instruction(name: &str, offset:usize) -> usize {
     println!("{name}");
     offset+1
 }

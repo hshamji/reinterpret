@@ -1,3 +1,7 @@
+extern crate num;
+#[macro_use]
+extern crate num_derive;
+
 use std::{ptr};
 use crate::lib::{disassemble_chunk, init_chunk, write_chunk};
 use crate::lib::OpCode::OpReturn;
