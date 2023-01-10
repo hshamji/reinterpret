@@ -42,11 +42,36 @@ pub fn free_chunk(c: &mut Chunk) {
 }
 
 pub fn disassemble_chunk(c: &mut Chunk, name: &str) {
+    println!("== {} ==", name);
 
+    let mut i = 0 ;
+    while i < c.count {
+        i =  disassemble_instruction(c, i);
+    }
 }
 
+// Returns offset of the next instruction
 fn disassemble_instruction(c: &mut Chunk, offset: usize) -> usize {
+    print!("{:?} ", offset);
 
+    unsafe {
+        let instruction = ptr::read(c.code.as_ptr().add(offset));
+
+        match instruction {
+            OpCode::OpReturn => {
+                return simpleInstruction("OP_RETURN", offset)
+            }
+            _ => {
+                println!("Unknown opcode: {:?}", instruction);
+                return offset+1
+            }
+        };
+    };
+}
+
+fn simpleInstruction(name: &str, offset:usize) -> usize {
+    println!("{name}");
+    offset+1
 }
 
 fn grow_capacity(a: usize) -> usize {
