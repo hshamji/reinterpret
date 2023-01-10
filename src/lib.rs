@@ -3,8 +3,10 @@ use std::ptr;
 use std::cmp::max;
 use std::ptr::NonNull;
 
+// https://stackoverflow.com/questions/41648339/how-to-specify-the-underlying-type-of-an-enum-in-rust
+#[repr(u8)]
 pub enum OpCode {
-    OP_RETURN,
+    OpReturn=0,
 }
 
 #[derive(Debug)]
@@ -29,14 +31,21 @@ pub fn write_chunk(c: &mut Chunk, val:u8) {
         println!("New cap: {}", new_capacity);
         grow_array(c, new_capacity);
     }
-
-    println!("Writing {} to array", val);
-
     unsafe {
         ptr::write(c.code.as_ptr().add(c.count), val);
     }
-
     c.count += 1 ;
+}
+
+pub fn free_chunk(c: &mut Chunk) {
+    grow_array(c, 0);
+}
+
+pub fn disassemble_chunk(c: &mut Chunk, name: &str) {
+
+}
+
+fn disassemble_instruction(c: &mut Chunk, offset: usize) -> usize {
 
 }
 
@@ -73,7 +82,7 @@ fn grow_array(c: &mut Chunk, new_capacity: usize) {
 fn main() {}
 
 #[test]
-fn test_writeChunk_can_create_array() {
+fn test_write_chunk_can_create_array() {
     let mut c = init_chunk();
     write_chunk(&mut c, 11u8);
     write_chunk(&mut c, 22u8);
@@ -86,6 +95,4 @@ fn test_writeChunk_can_create_array() {
 
         assert_eq!(actual_vec, expected_vec);
     };
-
-
 }
