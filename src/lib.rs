@@ -14,7 +14,7 @@ pub struct Chunk {
     pub capacity: usize,
 }
 
-pub fn initChunk() -> Chunk {
+pub fn init_chunk() -> Chunk {
     Chunk {
         code: NonNull::<u8>::dangling(),
         count: 0,
@@ -22,12 +22,12 @@ pub fn initChunk() -> Chunk {
     }
 }
 
-pub fn writeChunk(c: &mut Chunk, val:u8) {
+pub fn write_chunk(c: &mut Chunk, val:u8) {
     if c.capacity < c.count+1 {
         println!("Growing array");
-        let new_capacity = GROW_CAPACITY(c.capacity);
+        let new_capacity = grow_capacity(c.capacity);
         println!("New cap: {}", new_capacity);
-        GROW_ARRAY(c, new_capacity);
+        grow_array(c, new_capacity);
     }
 
     println!("Writing {} to array", val);
@@ -40,11 +40,11 @@ pub fn writeChunk(c: &mut Chunk, val:u8) {
 
 }
 
-fn GROW_CAPACITY(a: usize) -> usize {
+fn grow_capacity(a: usize) -> usize {
     max(a * 2, 8)
 }
 
-fn GROW_ARRAY(c: &mut Chunk, new_capacity: usize) {
+fn grow_array(c: &mut Chunk, new_capacity: usize) {
     if new_capacity == 0 {
         if c.count > 0 { // if there had been usage, deallocate, if not, do nothing
             unsafe {
@@ -70,5 +70,22 @@ fn GROW_ARRAY(c: &mut Chunk, new_capacity: usize) {
     c.capacity = new_capacity
 }
 
+fn main() {}
 
-#[cfg(test)]
+#[test]
+fn test_writeChunk_can_create_array() {
+    let mut c = init_chunk();
+    write_chunk(&mut c, 11u8);
+    write_chunk(&mut c, 22u8);
+    write_chunk(&mut c, 33u8);
+    write_chunk(&mut c, 44u8);
+
+    unsafe {
+        let actual_vec = Vec::from_raw_parts(c.code.as_ptr(), c.count, c.capacity);
+        let expected_vec: Vec::<u8> = vec![11,22,33,44];
+
+        assert_eq!(actual_vec, expected_vec);
+    };
+
+
+}
