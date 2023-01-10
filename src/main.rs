@@ -1,5 +1,5 @@
 use std::{ptr};
-use crate::lib::{init_chunk, write_chunk};
+use crate::lib::{disassemble_chunk, init_chunk, write_chunk};
 use crate::lib::OpCode::OpReturn;
 
 mod lib;
@@ -19,5 +19,6 @@ fn main() {
     write_chunk(&mut c, OpReturn as u8);
     unsafe { println!("Output vec: {:?}", Vec::<u8>::from_raw_parts(c.code.as_ptr(), c.count, c.capacity)); }
 
+    disassemble_chunk(&mut c, "test chunk");
 
 }

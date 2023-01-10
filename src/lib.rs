@@ -3,7 +3,13 @@ use std::ptr;
 use std::cmp::max;
 use std::ptr::NonNull;
 
+extern crate num;
+#[macro_use]
+extern crate num_derive;
+
+// https://enodev.fr/posts/rusticity-convert-an-integer-to-an-enum.html
 // https://stackoverflow.com/questions/41648339/how-to-specify-the-underlying-type-of-an-enum-in-rust
+#[derive(FromPrimitive)]
 #[repr(u8)]
 pub enum OpCode {
     OpReturn=0,
@@ -57,7 +63,9 @@ fn disassemble_instruction(c: &mut Chunk, offset: usize) -> usize {
     unsafe {
         let instruction = ptr::read(c.code.as_ptr().add(offset));
 
-        match instruction {
+        let op_code = num::FromPrimitive::from_u8(instruction).expect(&format!("Unknown Opcode: {:?}", instruction));
+
+        match op_code {
             OpCode::OpReturn => {
                 return simpleInstruction("OP_RETURN", offset)
             }
