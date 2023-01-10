@@ -9,9 +9,9 @@ pub enum OpCode {
 
 #[derive(Debug)]
 pub struct Chunk {
-    code: NonNull<u8>,
-    count: usize,
-    capacity: usize,
+    pub code: NonNull<u8>,
+    pub count: usize,
+    pub capacity: usize,
 }
 
 pub fn initChunk() -> Chunk {
@@ -24,12 +24,20 @@ pub fn initChunk() -> Chunk {
 
 pub fn writeChunk(c: &mut Chunk, val:u8) {
     if c.capacity < c.count+1 {
+        println!("Growing array");
         let new_capacity = GROW_CAPACITY(c.capacity);
-        // GROW_ARRAY(c, new_capacity);
+        println!("New cap: {}", new_capacity);
+        GROW_ARRAY(c, new_capacity);
     }
 
-    unsafe { ptr::write(c.code.as_ptr().add(c.count), val);}
-    c.count += 1;
+    println!("Writing {} to array", val);
+
+    unsafe {
+        ptr::write(c.code.as_ptr().add(c.count), val);
+    }
+
+    c.count += 1 ;
+
 }
 
 fn GROW_CAPACITY(a: usize) -> usize {
@@ -45,7 +53,14 @@ fn GROW_ARRAY(c: &mut Chunk, new_capacity: usize) {
         }
         if c.count > 0 { // if it had contents, can deallocate, if not, then can't deallocate
         }
-    } else {
+    } else if c.count == 0 {
+        // first allocation
+        c.code = NonNull::new(unsafe {
+            alloc::alloc(Layout::array::<u8>(new_capacity).unwrap())
+        }
+        ).unwrap();
+    }
+    else {
     //     reallocate to a possibly new mem location
         unsafe {
             c.code = NonNull::new(alloc::realloc(c.code.as_ptr(), Layout::array::<u8>(c.capacity).unwrap(), new_capacity)).unwrap();
@@ -55,6 +70,5 @@ fn GROW_ARRAY(c: &mut Chunk, new_capacity: usize) {
     c.capacity = new_capacity
 }
 
-fn main() {
-    let a = Layout::array::<u8>(5).unwrap();
-}
+
+#[cfg(test)]
