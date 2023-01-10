@@ -1,21 +1,17 @@
-#[macro_use]
-extern crate num_derive;
-extern crate num;
-
+use num_derive::FromPrimitive;
+use num_traits::FromPrimitive;
 
 use std::alloc::{self, Layout};
 use std::ptr;
 use std::cmp::max;
 use std::ptr::NonNull;
 
-
-
-// https://enodev.fr/posts/rusticity-convert-an-integer-to-an-enum.html
+// https://stackoverflow.com/a/28029279 NOT https://enodev.fr/posts/rusticity-convert-an-integer-to-an-enum.html
 // https://stackoverflow.com/questions/41648339/how-to-specify-the-underlying-type-of-an-enum-in-rust
 #[derive(FromPrimitive)]
 #[repr(u8)]
 pub enum OpCode {
-    OpReturn=0,
+    OpReturn,
 }
 
 #[derive(Debug)]
@@ -37,7 +33,7 @@ pub fn write_chunk(c: &mut Chunk, val:u8) {
     if c.capacity < c.count+1 {
         println!("Growing array");
         let new_capacity = grow_capacity(c.capacity);
-        println!("New cap: {}", new_capacity);
+        println!("New cap: {:?}", new_capacity);
         grow_array(c, new_capacity);
     }
     unsafe {
@@ -52,6 +48,9 @@ pub fn free_chunk(c: &mut Chunk) {
 
 pub fn disassemble_chunk(c: &mut Chunk, name: &str) {
     println!("== {} ==", name);
+    unsafe {
+        println!("Getting first few elems: {:#018b}", ptr::read(c.code.as_ptr().add(0)));
+    }
 
     let mut i = 0 ;
     while i < c.count {
@@ -61,15 +60,14 @@ pub fn disassemble_chunk(c: &mut Chunk, name: &str) {
 
 // Returns offset of the next instruction
 fn disassemble_instruction(c: &mut Chunk, offset: usize) -> usize {
-    print!("{:?} ", offset);
+    print!("Offset: {} ", offset);
 
     unsafe {
         let instruction = ptr::read(c.code.as_ptr().add(offset));
+        print!("Instruction: {}>Address:{:?}>", instruction, c.code.as_ptr());
 
-        let op_code = num::FromPrimitive::from_u8(instruction).expect(&format!("Unknown Opcode: {:?}", instruction));
-
-        return match op_code {
-            OpCode::OpReturn => {
+        return match FromPrimitive::from_u8(instruction) {
+            Some(OpCode::OpReturn) => {
                 simple_instruction("OP_RETURN", offset)
             }
             _ => {

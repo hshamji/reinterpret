@@ -1,6 +1,6 @@
-extern crate num;
-#[macro_use]
-extern crate num_derive;
+// extern crate num;
+// #[macro_use]
+// extern crate num_derive;
 
 use std::{ptr};
 use crate::lib::{disassemble_chunk, init_chunk, write_chunk};
@@ -13,12 +13,12 @@ fn main() {
     println!("Initial array is {:?}", c);
 
     write_chunk(&mut c, 10u8);
-    println!("Size: {}, Value at offset: {:?}", c.count, unsafe{ptr::read(c.code.as_ptr().add(0))});
+    println!("Size: {}, Value at offset: {:#018b}", c.count, unsafe{ptr::read(c.code.as_ptr().add(0usize))});
     write_chunk(&mut c, 20u8);
-    println!("Size: {}, Value at offset: {:?}", c.count, unsafe{ptr::read(c.code.as_ptr().add(1))});
+    println!("Size: {}, Value at offset: {:?}", c.count, unsafe{ptr::read(c.code.as_ptr().add(1usize))});
     write_chunk(&mut c, 30u8);
-    println!("Size: {}, Value at offset: {:?}", c.count, unsafe{ptr::read(c.code.as_ptr().add(2))});
-
+    println!("Size: {}, Value at offset: {:?}", c.count, unsafe{ptr::read(c.code.as_ptr().add(2usize))});
+    println!("Address of array: {:?}", c.code.as_ptr());
 
     write_chunk(&mut c, OpReturn as u8);
     unsafe { println!("Output vec: {:?}", Vec::<u8>::from_raw_parts(c.code.as_ptr(), c.count, c.capacity)); }
