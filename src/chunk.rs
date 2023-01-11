@@ -1,3 +1,5 @@
+mod value;
+
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 
@@ -5,6 +7,8 @@ use std::alloc::{self, Layout};
 use std::ptr;
 use std::cmp::max;
 use std::ptr::NonNull;
+
+use crate::va
 
 // https://stackoverflow.com/a/28029279 NOT https://enodev.fr/posts/rusticity-convert-an-integer-to-an-enum.html
 // https://stackoverflow.com/questions/41648339/how-to-specify-the-underlying-type-of-an-enum-in-rust
@@ -19,6 +23,7 @@ pub struct Chunk {
     pub code: NonNull<u8>,
     pub count: usize,
     pub capacity: usize,
+    pub constants: ValueArray,
 }
 
 pub fn init_chunk() -> Chunk {
@@ -26,6 +31,7 @@ pub fn init_chunk() -> Chunk {
         code: NonNull::<u8>::dangling(),
         count: 0,
         capacity: 0,
+        constants: init_value_array(),
     }
 }
 
@@ -58,6 +64,7 @@ pub fn disassemble_chunk(c: &mut Chunk, name: &str) {
     }
 }
 
+// When need to start considering multiple bytes look at the `byteorder` crate https://stackoverflow.com/a/50244328
 // Returns offset of the next instruction
 fn disassemble_instruction(c: &mut Chunk, offset: usize) -> usize {
     print!("Offset: {} ", offset);
