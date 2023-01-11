@@ -3,13 +3,13 @@ use std::ptr;
 use std::cmp::max;
 use std::ptr::NonNull;
 
-type Value = u16;
+pub type Value = f64;
 
 #[derive!(Debug)]
 pub struct ValueArray {
-    capacity: usize,
-    count: usize,
-    values : NonNull<Value>,
+    pub capacity: usize,
+    pub count: usize,
+    pub values : NonNull<Value>,
 }
 
 
@@ -21,7 +21,7 @@ pub fn init_value_array() -> ValueArray {
     }
 }
 
-pub fn write_value_array(c: &mut ValueArray, val:u8) {
+pub fn write_value_array(c: &mut ValueArray, val: Value) {
     if c.capacity < c.count+1 {
         println!("Growing array");
         let new_capacity = grow_capacity(c.capacity);

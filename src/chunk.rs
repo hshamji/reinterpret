@@ -8,7 +8,7 @@ use std::ptr;
 use std::cmp::max;
 use std::ptr::NonNull;
 
-use crate::va
+use crate::value::{ValueArray, Value, init_value_array, write_value_array};
 
 // https://stackoverflow.com/a/28029279 NOT https://enodev.fr/posts/rusticity-convert-an-integer-to-an-enum.html
 // https://stackoverflow.com/questions/41648339/how-to-specify-the-underlying-type-of-an-enum-in-rust
@@ -16,6 +16,7 @@ use crate::va
 #[repr(u8)]
 pub enum OpCode {
     OpReturn,
+    OpConstant,
 }
 
 #[derive(Debug)]
@@ -33,6 +34,11 @@ pub fn init_chunk() -> Chunk {
         capacity: 0,
         constants: init_value_array(),
     }
+}
+
+pub fn add_constant(c: &mut Chunk, v: Value) -> usize{
+    write_value_array(&mut c.constants, v);
+    c.constants.count - 1
 }
 
 pub fn write_chunk(c: &mut Chunk, val:u8) {
