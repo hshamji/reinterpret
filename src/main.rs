@@ -23,8 +23,10 @@ fn main() {
     write_chunk(&mut c, 33u8);
     println!("Size: {}, Value at offset: {:?}", c.count, unsafe{ptr::read(c.code.as_ptr().add(2usize))});
     println!("Address of array: {:?}", c.code.as_ptr());
-
+    //
     write_chunk(&mut c, OpReturn as u8);
+
+    // Notes - ownership is transferred to Vec::<> which may allocate, reallocate, etc. That's what happening when I try to print this
     unsafe { println!("Output vec: {:?}", Vec::<u8>::from_raw_parts(c.code.as_ptr(), c.count, c.capacity)); }
 
     disassemble_chunk(&mut c, "test chunk");
@@ -35,13 +37,13 @@ fn main() {
     // let t2 = t.read_u16::<BigEndian>();
     // println!("t2 res: {:?}", t2);
 
-    let mut data = [1, 16, 1, 2];
-    let mut current = &data[..];
-    println!("Current {:?}", current);
-
-    let v1 = current.read_u16::<LittleEndian>();
-    let v2 = current.read_u16::<BigEndian>();
-    println!("{:?}, {:?}", v1, v2); // Ok(4097), Ok(258)
+    // let mut data = [1, 16, 1, 2];
+    // let mut current = &data[..];
+    // println!("Current {:?}", current);
+    //
+    // let v1 = current.read_u16::<LittleEndian>();
+    // let v2 = current.read_u16::<BigEndian>();
+    // println!("{:?}, {:?}", v1, v2); // Ok(4097), Ok(258)
 
     // let d = [1,16];
     // let d2 = data[..2];
