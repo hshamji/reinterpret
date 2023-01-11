@@ -1,4 +1,3 @@
-mod value;
 
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;

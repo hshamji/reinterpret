@@ -3,14 +3,14 @@
 // extern crate num_derive;
 
 use std::{ptr};
-use crate::chunk::{disassemble_chunk, init_chunk, write_chunk};
-use crate::chunk::OpCode::OpReturn;
+use crate::chunk::{disassemble_chunk, init_chunk, write_chunk, add_constant};
+use crate::chunk::OpCode::{OpReturn, OpConstant};
+use crate::value::{init_value_array, write_value_array};
 use byteorder::{BigEndian, LittleEndian, ReadBytesExt};
-use ops::add_constant;
-use ops::OpCode::OpConstant;
 
 mod chunk;
 mod value;
+
 
 fn main() {
     let mut c = init_chunk();
@@ -43,13 +43,13 @@ fn main() {
     let v2 = current.read_u16::<BigEndian>();
     println!("{:?}, {:?}", v1, v2); // Ok(4097), Ok(258)
 
-    let d = [1,16];
-    let d2 = data[..2];
-    let val = u16::from_be_bytes(d2);
-    println!("data: {:?}, converted: {:?}", data[1..3], val);
+    // let d = [1,16];
+    // let d2 = data[..2];
+    // let val = u16::from_be_bytes(d2);
+    // println!("data: {:?}, converted: {:?}", data[1..3], val);
 
     let loc = add_constant(&mut c, 1.2);
     write_chunk(&mut c, OpConstant as u8);
-    write_chunk(&mut c, loc);
+    write_chunk(&mut c, loc as u8);
 
 }

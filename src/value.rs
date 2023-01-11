@@ -5,7 +5,7 @@ use std::ptr::NonNull;
 
 pub type Value = f64;
 
-#[derive!(Debug)]
+#[derive(Debug)]
 pub struct ValueArray {
     pub capacity: usize,
     pub count: usize,
@@ -29,7 +29,7 @@ pub fn write_value_array(c: &mut ValueArray, val: Value) {
         grow_array(c, new_capacity);
     }
     unsafe {
-        ptr::write(c.code.as_ptr().add(c.count), val);
+        ptr::write(c.values.as_ptr().add(c.count), val);
     }
     c.count += 1 ;
 }
