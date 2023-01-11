@@ -3,14 +3,7 @@ use std::ptr;
 use std::cmp::max;
 use std::ptr::NonNull;
 
-pub type Value = f64;
 
-#[derive(Debug)]
-pub struct ValueArray {
-    pub capacity: usize,
-    pub count: usize,
-    pub values : NonNull<Value>,
-}
 
 
 pub fn init_value_array() -> ValueArray {
