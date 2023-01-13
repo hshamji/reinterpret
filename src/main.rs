@@ -4,12 +4,13 @@
 
 use std::{ptr};
 use crate::chunk::{disassemble_chunk, init_chunk, write_chunk, add_constant};
-use crate::chunk::OpCode::{OpReturn, OpConstant};
+use crate::types::OpCode::{OpReturn, OpConstant};
 use crate::value::{init_value_array, write_value_array};
 use byteorder::{BigEndian, LittleEndian, ReadBytesExt};
 
 mod chunk;
 mod value;
+mod types;
 
 
 fn main() {
@@ -53,5 +54,18 @@ fn main() {
     let loc = add_constant(&mut c, 1.2);
     write_chunk(&mut c, OpConstant as u8);
     write_chunk(&mut c, loc as u8);
+
+
+    let mut v = vec!["one", "twotheasdf", "a;dsfa;ksdhfkajhsdfkajhsdl;kjalk;sdfjlk;asjdf"];
+    println!("{},then {}", v[2], v[0]);
+    v[2] = "sth else";
+    println!("Updated vec {:?}", v);
+
+    let mut u = v[2];
+    println!("U: {:?}", u);
+    u = "another";
+    println!("Reupdated vec: {:?}, u:{:?}", v, u);
+
+
 
 }

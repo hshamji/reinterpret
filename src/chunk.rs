@@ -5,8 +5,10 @@ use std::alloc::{self, Layout};
 use std::ptr;
 use std::cmp::max;
 use std::ptr::NonNull;
+use num_traits::FromPrimitive;
 
-use crate::value::{ValueArray, Value, init_value_array, write_value_array};
+use crate::types::{Value, ValueArray, OpCode};
+use crate::value::{init_value_array, write_value_array};
 
 
 
